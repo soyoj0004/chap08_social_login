@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Layout page</title>
+</head>
+<body>
+
+<div>
+    <h3>여기는 레이아웃 페이지의 헤더입니다.</h3>
+</div>
+
+<div layout:fragment="content">
+    <p>여기는 컨텐트 페이지의 내용이 오는 부분입니다. </p>
+</div>
+
+<div>
+    <h3>여기는 레이아웃 페이지의 푸터입니다.</h3>
+</div>
+
+<th:block layout:fragment="script" >
+</th:block>
+
+</body>
+</html>

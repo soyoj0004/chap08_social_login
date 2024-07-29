@@ -1,0 +1,142 @@
+
+// 플러그인 섹션: 프로젝트에 필요한 플러그인들을 정의.
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.2'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.javalab'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	// 특정 의존성들을 프로젝트 컴파일 시에만 사용하도록 지정.
+	// 이러한 의존성들은 빌드된 JAR 배포 파일에 미포함,용량줄임.
+	compileOnly {
+		// 컴파일 시간에 실행되어야 하는 어노테이션 프로세서 지정.
+		// annotationProcessor 구성에 추가된 의존성들이 compileOnly 구성에도 적용됨.
+		// 예를들면 롬복 같은 디펜던시. 다양한 어노테이션을 갖고 있는 롬복 어노테이션들은
+		// 컴파일 타임에 처리되어 추가적인 코드를 생성하거나 기존 코드를 변경하는 작업 수행.
+		extendsFrom annotationProcessor
+	}
+}
+
+// 저장소 섹션: 의존성 download 받을 외부 저장소.
+repositories {
+	mavenCentral()
+}
+
+
+
+dependencies {
+	// Spring Boot 에서 웹 MVC 패턴 개발 관련 의존성
+	// 1. 내장 톰캣 제공
+	// 2. Spring MVC 웹 앱 위한 framework 제공
+	//   Controller, Service, Repository 등의 구성 요소를 쉽게 개발
+	//   @RestController, @RequestMapping 등의 Annotation 사용
+	// 3. Jackson : JSON To Java 객체, 자바 객체 To Json 변환
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// 스프링 data jpa 관련 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+
+	// jsp 역할을 하는 thymeleaf template engine 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// 스프링 테스트 관련
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// 롬복
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	// Test Case 에서 롬복 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// DevTools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// [서블릿관련의존성] Jakarta Servlet API for HttpServletRequest and HttpServletResponse
+	implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+	// mariadb driver
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	// thymeleaf template layout 관련 의존성
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.1'
+
+	// SQL 로그 의존성
+	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+	// modelmapper Dto To Entity 변환
+	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
+
+	// validation
+	implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.2.1.Final'
+
+	// 스프링 시큐리티
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// Swagger
+//	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+
+	// AOP
+//	implementation 'org.springframework.boot:spring-boot-starter'
+//	implementation 'org.springframework.boot:spring-boot-starter-aop'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// Thumbnail
+	implementation 'net.coobird:thumbnailator:0.4.16'
+
+	// 타임리프에서 시큐리티 사용
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
+
+
+	// 스프링 소셜 로그인을 위한 OAuth2 클라이언트 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// QueryDsl 관련
+	//querydsl dependencies 추가(스프링부트 3.0 이상)
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+	//Quderydsl 끝
+
+
+
+}
+
+// 테스트 태스크 설정: JUnit Platform을 사용하여 테스트를 실행.
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+/**
+ * [기존 빌드 데이터 삭제 및 생성 위치 지정]
+ *  - clean 하면 루트에 만들어진 build/ 폴더가 기본으로 삭제됨.
+ *  - build/ 폴더 안에 있던 컴파일된 클래스 파일들,생성된 자원, 캐시 등
+ *    만들어진 모든 파일들이 제거됨.
+ *  - build/ 폴더와 더불어서 아래 설정한 generated 폴더도 함께 삭제됨.
+ */
+def querydslSrcDir = 'src/main/generated'
+clean {
+	delete file(querydslSrcDir)
+}
+// QueryDSL 어노테이션 프로세서가 생성하는 Q타입 클래스들이 저장될 위치 설정.
+tasks.withType(JavaCompile) {
+	options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
+
+processResources {
+	duplicatesStrategy = DuplicatesStrategy.INCLUDE
+	from('src/main/resources') {
+		include 'templates/**'
+	}
+}

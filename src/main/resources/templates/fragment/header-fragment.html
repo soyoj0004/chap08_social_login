@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Header Fragment</title>
+</head>
+    <div th:fragment="header-fragment">
+        <div class="header">
+            <!-- 메뉴 추가 시작 -->
+            <div class="menu">
+                <a th:href="@{/board/list}">게시물 목록 </a>
+                <a th:href="@{/board/register}">게시물 등록</a>
+            </div>
+            <!-- 메뉴 추가 끝 -->
+        </div>
+    </div>

@@ -17,6 +17,9 @@
         <div class="card-body">
           <form action="/board/register" method="post"
                 th:object="${boardDTO}">
+
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
             <div class="input-group mb-3">
               <span class="input-group-text">Title</span>
               <!--<input type="text" name="title" class="form-control" placeholder="Title">-->
@@ -126,7 +129,7 @@
 
   }, false)
 
-  //파일 업로드 버튼 클릭
+  // 파일 업로드 버튼 클릭
   document.querySelector(".uploadBtn").addEventListener("click", function(e){
     const formObj = new FormData();
 
@@ -139,7 +142,7 @@
       formObj.append("files", files[i]);
     }
     console.log('formObj', formObj)
-
+    // 파일 업로드
     uploadToServer(formObj).then(result => {
       console.log('result : ', result)
       for (const uploadResult of result) {
@@ -156,7 +159,7 @@
   const uploadResult = document.querySelector(".uploadResult")
 
   // 섬네일을 보여주는 함수
-  function showUploadFile({uuid, fileName, link}){
+  function showUploadFile({uuid, fileName, link}){ // 객체 분해 할당(디스트럭처링) 보내는 쪽의 객체의 값들을 받아서 변수로 사용할 수 있게 해준다. uploadResult의 객체를 받아서 uuid, fileName, link를 변수로 사용할 수 있게 해준다.
 
     const str =`<div class="card col-4">
             <div class="card-header d-flex justify-content-center">

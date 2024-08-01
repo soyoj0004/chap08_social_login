@@ -23,6 +23,8 @@
         <div class="card-body">
           <form action="/item/register" method="post"
                 th:object="${itemFormDTO}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
             <!-- Item Name -->
             <div class="input-group mb-3">
               <span class="input-group-text">Item Name</span>
@@ -176,7 +178,7 @@
   const uploadResult = document.querySelector(".uploadResult")
 
   // 섬네일을 보여주는 함수
-  function showUploadFile({uuid, fileName, link}){
+  function showUploadFile({uuid, fileName, link}){ /* uploadResult의 객체를 받아서 uuid, fileName, link를 변수로 사용할 수 있게 해준다. */
 
     const str =`<div class="card col-4">
             <div class="card-header d-flex justify-content-center">

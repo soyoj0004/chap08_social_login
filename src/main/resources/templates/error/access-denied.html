@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<!-- layout Content -->
+<div layout:fragment="content">
+    <div class="container">
+        <div class="text-center">
+            <br>
+            <h4>접근 권한 없음 페이지</h4>
+            <!-- Added text-center class -->
+            <div style="padding-top: 50px;" class="col">
+                <div class="container text-center">
+                    <h1>
+							<span th:text="${#authentication.principal.username}"
+                                  class="alert alert-danger">접근 권한 없음</span>
+                    </h1>
+                    <br />
+                    <h3 th:text="${error}"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

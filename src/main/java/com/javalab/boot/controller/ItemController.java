@@ -42,7 +42,7 @@ public class ItemController {
         return roles;
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // 등록은 관리자만 가능하도록 설정
+    //@PreAuthorize("hasRole('ADMIN')") // 등록은 관리자만 가능하도록 설정
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("itemFormDTO", new ItemFormDTO());
@@ -81,7 +81,7 @@ public class ItemController {
         return "item/read";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')") // 상품 수정도 관리자만 가능하도록 설정
+    //@PreAuthorize("hasAuthority('ADMIN')") // 상품 수정도 관리자만 가능하도록 설정
     @GetMapping({"/modify"})
     public String modifyGet(@RequestParam("id") Long id, @ModelAttribute("pageRequestDTO") PageRequestDTO pageRequestDTO, Model model) {
         ItemFormDTO itemFormDTO = itemService.readOne(id);

@@ -22,6 +22,10 @@ import java.util.*;
 
 /**
  * 업로드 레스트 컨트롤러
+ * @RestController : 해당 클래스가 REST 방식의 컨트롤러임을 명시
+ * - @Controller + @ResponseBody : 컨트롤러가 반환하는 값이 View가 아닌 HTTP Response Body에 직접 작성
+ * - @Restcontroller의 모든 메소드는 @ResponseBody 어노테이션이 적용된 것과 같다.
+ * - [중요] jackon-databind 라이브러리가 클래스패스에 존재하면, 메소드에서는 객체를 JSON으로 변환해서 반환한다.
  */
 @RestController
 @Log4j2
@@ -31,6 +35,14 @@ public class UpDownController {
     @Value("${com.javalab.boot.upload.path}")
     private String uploadPath;
 
+    /**
+     * 업로드 처리
+     * @param uploadFileDTO
+     * consumes : 클라이언트가 보내는 데이터의 타입을 지정
+     * produces : 클라이언트에게 보내는 데이터의 타입을 지정
+     * MediaType.MULTIPART_FORM_DATA_VALUE : 멀티파트 폼 데이터를 처리하는 요청을 처리
+     * @return
+     */
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public List<UploadResultDTO> upload(UploadFileDTO uploadFileDTO){
 
@@ -67,16 +79,23 @@ public class UpDownController {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                /*
+                  업로드 결과를 리스트에 추가 - uuid, 파일명, 이미지 여부
+                  - 이 결과가 JSON으로 변환되어 클라이언트에게 전달(UploadResultDTO -> JSON)
+                  - UploadResultDTO -> JSON 변환시 Dto의 getter 메소드를 호출해서 JSON
+                    문자열의 값을 설정한다.
 
+                 */
                 list.add(UploadResultDTO.builder()
-                        .uuid(uuid)
-                        .fileName(originalName)
-                        .img(image).build()
+                        .uuid(uuid) // uuid
+                        .fileName(originalName) // 파일명
+                        .img(image) // 이미지 파일 여부
+                        .build()
                 );
 
             });//end each
 
-            return list;
+            return list; // 호출한 곳으로 전달 - 업로드 결과
         }//end if
 
         return null;

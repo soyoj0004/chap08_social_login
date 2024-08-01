@@ -44,14 +44,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         log.info("userRequest....{}", userRequest);
 
-        ClientRegistration clientRegistration = userRequest.getClientRegistration();
-        String clientName = clientRegistration.getClientName();
+        ClientRegistration clientRegistration = userRequest.getClientRegistration(); // 클라이언트 정보를 가져옴, 예를들면 카카오, 구글 등
+        String clientName = clientRegistration.getClientName(); // 클라이언트 이름을 가져옴, 예를들면 카카오
 
-        log.info("clientName {} ",  clientName);
+        log.info("clientName {} ",  clientName); // 소셜 회사
 
-        OAuth2User oAuth2User = super.loadUser(userRequest);
+        // OAuth2User 가 포함하는 정보는 소셜 로그인회사에서 받아온 정보들이다.
+        OAuth2User oAuth2User = super.loadUser(userRequest);    // 부모의 loadUser(소셜로그인회사, 액세스토큰) OAuth2User 객체를 가져옴
 
-        Map<String, Object> paramMap = oAuth2User.getAttributes();
+        Map<String, Object> paramMap = oAuth2User.getAttributes(); // 소셜 로그인회사에서 받아온 정보들을 paramMap에 저장
 
         String email = null;
 
@@ -70,31 +71,34 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private MemberSecurityDTO generateDTO(String email, Map<String, Object> params) {
+        // 소셜 로그인 회사에서 받은 이메일로 우리 데이터베이스에서 회원 정보를 조회
         Member result = memberRepository.findByEmail(email);
-
+        // 회원 정보가 없다면 회원 정보를 생성하여 저장, 즉 최초 소셜 로그인 진행자
         if (result == null) {
+            // 최초 소셜 로그인한 사용자를 DB에 저장
             Member member = Member.builder()
-                    .password(passwordEncoder.encode("1111"))
+                    .password(passwordEncoder.encode("1111")) // 소셜로그인 사용자는 비밀번호를 1111로 세팅
                     .email(email)
-                    .social(true)
-                    .role(Role.USER)
+                    .social(true)       // 소셜 로그인 플래그 true
+                    .role(Role.USER)    // 소셜 로그인 사용자는 USER 권한을 가짐
                     .del(false)
                     .build();
-            memberRepository.save(member);
-
+            memberRepository.save(member); // 영속화
+            // Authentication 객체로 만들 DTO를 생성하여 반환
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
                     email,
                     "1111",
                     Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"))
             );
-            memberSecurityDTO.setProps(params);
-            memberSecurityDTO.setSocial(true);
+            memberSecurityDTO.setProps(params); // 소셜 로그인 정보를 저장
+            memberSecurityDTO.setSocial(true);  // 소셜 로그인 플래그 true
 
             return memberSecurityDTO;
-        } else {
+        } else {    // 이전에 소셜 로그인해서 데이터베이스 정보가 있는 경우
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority(result.getRole().name()));
 
+            authorities.add(new SimpleGrantedAuthority(result.getRole().name()));
+            // 데이터베이스에서 읽어온 정보로 인증객체 생성
             MemberSecurityDTO memberSecurityDTO = new MemberSecurityDTO(
                     result.getEmail(),
                     result.getPassword(),
@@ -107,10 +111,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private String getKakaoEmail(Map<String, Object> paramMap) {
         log.info("KAKAO-----------------------------------------");
-        Object value = paramMap.get("kakao_account");
+        Object value = paramMap.get("kakao_account"); // 카카오에서 받아온 정보 중 kakao_account 정보를 가져옴
         log.info(value);
-        LinkedHashMap accountMap = (LinkedHashMap) value;
-        String email = (String) accountMap.get("email");
+        LinkedHashMap accountMap = (LinkedHashMap) value; // kakao_account 정보를 LinkedHashMap으로 변환
+        String email = (String) accountMap.get("email"); // LinkedHashMap에서 email 정보를 가져옴
         log.info("email..." + email);
         return email;
     }

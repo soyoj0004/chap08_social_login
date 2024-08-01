@@ -117,48 +117,61 @@
 <!--jQuery 라이브러리-->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+
 <script layout:fragment="script" th:inline="javascript">
-    $(document).ready(function() {
-        $(".pagination").on("click", function(e) {
-            // submit 방지
-            e.preventDefault();
-            // 이벤트 버블링 방지
-            e.stopPropagation();
 
-            // 이벤트가 발생한 요소의 참조 주소 얻기
-            const target = e.target;
+    /*<![CDATA[*/
+        var auth = /*[[${#authentication}]]*/ {};
+        var principal = /*[[${#authentication.principal}]]*/ {};
+        var authorities = /*[[${#authentication.authorities}]]*/ {};
 
-            // <a>태그가 아니면 메소드 exit
-            if(target.tagName !== 'A') {
-                return;
-            }
-            // 요소에 설정해놓은 임시 변수(data-*)값 얻기
-            const num = target.getAttribute("data-num");
+        console.log("auth: ", auth);
+        console.log("principal : ", principal);
+        console.log("authorities : ", authorities);
+        /*]]>*/
 
-            // 폼 주소 얻기
-            const formObj = $("form");
-            // 폼에 동적으로 요소 생성해서 추가하기
-            formObj.append(`<input type='hidden' name='page' value='${num}'>`);
-            /* [백틱 안쓰면] formObj.append("<input type='hidden' name='page' value='" + num + "'>"); */
 
-            // 폼 전송
-            formObj.submit();
-        });
+$(document).ready(function() {
+    $(".pagination").on("click", function(e) {
+        // submit 방지
+        e.preventDefault();
+        // 이벤트 버블링 방지
+        e.stopPropagation();
 
-        // clear 버튼 클릭시 리스트 전체 다시 조회
-        $(".clearBtn").on("click", function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        // 이벤트가 발생한 요소의 참조 주소 얻기
+        const target = e.target;
 
-            window.location.href = '/board/list';
-        });
-
-        //show modal
-        const result = [[${result}]];
-        const modal = new bootstrap.Modal($(".modal")[0]);
-        if(result){
-            modal.show();
+        // <a>태그가 아니면 메소드 exit
+        if(target.tagName !== 'A') {
+            return;
         }
+        // 요소에 설정해놓은 임시 변수(data-*)값 얻기
+        const num = target.getAttribute("data-num");
+
+        // 폼 주소 얻기
+        const formObj = $("form");
+        // 폼에 동적으로 요소 생성해서 추가하기
+        formObj.append(`<input type='hidden' name='page' value='${num}'>`);
+        /* [백틱 안쓰면] formObj.append("<input type='hidden' name='page' value='" + num + "'>"); */
+
+        // 폼 전송
+        formObj.submit();
     });
+
+    // clear 버튼 클릭시 리스트 전체 다시 조회
+    $(".clearBtn").on("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        window.location.href = '/board/list';
+    });
+
+    //show modal
+    const result = [[${result}]];
+    const modal = new bootstrap.Modal($(".modal")[0]);
+    if(result){
+        modal.show();
+    }
+});
 </script>
 

@@ -28,6 +28,9 @@
                 <div class="card-body">
                     <form id="registerForm" action="/member/join" method="post"
                           th:object="${memberFormDto}">
+
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
                         <div class="input-group mb-3">
                             <span class="input-group-text">이름</span>
                             <input type="text" th:field="*{name}" class="form-control"

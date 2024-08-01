@@ -18,6 +18,10 @@
         <div class="card-body">
           <form id="modifyForm" th:action="@{/member/modify}" method="post">
             <div class="input-group mb-3">
+
+              <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+
               <span class="input-group-text">New Password</span>
               <input type="password" name="newPassword" class="form-control" required>
             </div>

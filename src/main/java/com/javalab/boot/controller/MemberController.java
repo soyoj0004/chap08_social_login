@@ -74,8 +74,9 @@ public class MemberController {
 
     // 카카오 소셜 로그인 사용자 비밀번호 변경 화면
     @GetMapping("/modify")
-    public void modifyGET() {
+    public String modifyGET() {
         log.info("modify get...");
+        return "member/modify";
     }
 
     // 카카오 소셜 로그인 사용자 비밀번호+social 변경

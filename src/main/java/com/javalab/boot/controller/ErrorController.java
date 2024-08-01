@@ -1,5 +1,6 @@
-package com.javalab.boot.security.handler;
+package com.javalab.boot.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -16,14 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class ErrorController {
 
     @GetMapping("/access-denied")
-    public String accessDenied(Model model) {
+    public String accessDenied(Model model, HttpServletResponse response) {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        model.addAttribute("username", username);
-        model.addAttribute("error", "해당 페이지에 접근 권한이 없습니다.");
-      
-        log.info("accessDenied username : " + username);
-        
+        model.addAttribute("error", "접근 권한이 없습니다.");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 상태 코드(302) 설정
+
         return "error/access-denied"; 
     }
 }

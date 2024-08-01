@@ -81,7 +81,8 @@ public class SecurityConfig {
 						.requestMatchers("/", "/home", "/about", "/contact").permitAll()  // 필요에 따라 추가
 						.requestMatchers("/view/**").permitAll()
 						.requestMatchers("/member/login", "/member/action", "/member/join/**").permitAll()
-						.requestMatchers("/member/modify").hasRole("USER")
+						//.requestMatchers("/member/modify").hasRole("USER")
+						.requestMatchers("/member/modify").permitAll()
 						.requestMatchers("/board/**").permitAll()
 						.requestMatchers("/item/view/**", "/item/list/**", "/item/read/**").permitAll()
 						.requestMatchers("/item/register/**", "/item/modify/**", "/item/remove/**").hasRole("ADMIN")
@@ -89,6 +90,7 @@ public class SecurityConfig {
 						.requestMatchers("/order/**", "/orders/**", "orderDetails").hasAnyRole("USER", "ADMIN")
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 						.requestMatchers("/api/track/**").hasAnyRole("USER", "ADMIN")
+						.requestMatchers("/error/access-denied").permitAll()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(sessionManagement -> sessionManagement
@@ -101,10 +103,10 @@ public class SecurityConfig {
 				)
 				//.csrf(AbstractHttpConfigurer::disable)
 				.oauth2Login(oauth2 -> oauth2
-						.loginPage("/member/login")
+						.loginPage("/member/login")	// 로그인 페이지(MembmerController 에서 정의한 경로)
 						.successHandler(authenticationSuccessHandler())
 						.userInfoEndpoint(userInfo -> userInfo
-								.userService(customOAuth2UserService)
+								.userService(customOAuth2UserService)	// 소셜 로그인 담당 주체
 						)
 				);
 
